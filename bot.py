@@ -19,6 +19,8 @@ DIVULGADOR_ROLE = int(os.getenv("DIVULGADOR_ROLE"))
 CARGOS_ADM      = [int(x) for x in os.getenv("CARGOS_ADM", "").split(",") if x]
 
 LOJA          = "FLY Store"
+BANNER_URL    = "https://media.discordapp.net/attachments/1368075430736953435/1522483534227312651/static_1.png?ex=6adba208&is=6ada5088&hm=e050876e86714bd4bf7715c1136b659b4a728f1248c41fa82d883a2c38a5b5cd&=&format=webp&quality=lossless"
+LOGO_URL      = "https://media.discordapp.net/attachments/1553221716099211386/1562964417669242900/cc4b7621-b3ec-4749-af10-bde1be72ebe0_e6c5d991-b336-443c-ab79-23c2a4fbe08a-standard.webp?ex=6adbe78b&is=6ada960b&hm=2c51ed7f9c1d95b170b7d61cec7307d95986cf7a81a8790642eec93ab9a181f2&=&format=webp"
 COOLDOWN_DIAS = 1 / 1440  # 1 minuto
 
 COOLDOWN_FILE  = "cooldowns.json"
@@ -863,6 +865,8 @@ async def on_message(message: discord.Message):
 @app_commands.checks.has_permissions(administrator=True)
 async def postar_vagas(interaction: discord.Interaction):
     embed = discord.Embed(description=VAGAS_MSG, color=VAGAS_COLOR)
+    embed.set_image(url=BANNER_URL)
+    embed.set_thumbnail(url=LOGO_URL)
     embed.set_footer(text=f"{LOJA}  ·  Clique para se candidatar")
     await interaction.channel.send(embed=embed, view=PainelPublicoView())
     await interaction.response.send_message("Painel público postado.", ephemeral=True)
