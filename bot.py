@@ -888,16 +888,16 @@ async def postar_vagas(interaction: discord.Interaction):
 @app_commands.checks.has_permissions(administrator=True)
 async def postar_painel_adm(interaction: discord.Interaction):
     embed = discord.Embed(
-        title=f"Painel de Controle · {LOJA}",
+        title=f"**Painel de Controle · {LOJA}**",
         description=(
-            "**›› Ações disponíveis**\n\n"
-            "◉  **Listar Divulgadores** — membros com cargo ativo\n"
-            "✖  **Revogar Divulgador** — remove cargo e notifica por DM\n"
-            "◈  **Candidaturas Pendentes** — aguardando análise\n"
-            "◉  **Histórico de Avaliações** — últimas 20 avaliações de vídeo\n\n"
+            f"{EM_REQ} **AÇÕES DISPONÍVEIS**\n\n"
+            f"{EM_ITEM} **Listar Divulgadores** — membros com cargo ativo\n"
+            f"{EM_ITEM} **Revogar Divulgador** — remove cargo e notifica por DM\n"
+            f"{EM_ITEM} **Candidaturas Pendentes** — aguardando análise\n"
+            f"{EM_ITEM} **Histórico de Avaliações** — últimas 20 avaliações de vídeo\n\n"
             "─────────────────────────────\n"
-            "Acesso restrito a ADMs e Owner.\n"
-            "Candidaturas e vídeos para avaliar chegam neste canal automaticamente."
+            f"{EM_AVI} **Acesso restrito a ADMs e Owner**\n"
+            f"{EM_KEY} **Candidaturas e vídeos chegam neste canal automaticamente**"
         ),
         color=ADM_COLOR,
     )
