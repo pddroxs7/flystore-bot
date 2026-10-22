@@ -76,7 +76,7 @@ VAGAS_MSG = (
     f"{EM_ITEM} **Clique no botão abaixo e preencha o formulário**\n"
     f"{EM_ITEM} **Divulgadores: use o botão Enviar Vídeo para registrar seus vídeos**\n"
     f"{EM_ITEM} **Aguarde a análise do seu perfil**\n\n"
-    "─────────────────────────────\n"
+    
     f"{EM_AVI} **Vagas limitadas — candidate-se agora!**\n\n"
     f"{EM_KEY} **NÃO DAMOS KEY DE GRAÇA**\n"
     f"{EM_KEY} **VOCÊ PRECISA TER UMA KEY OU ADQUIRIR NA LOJA**"
@@ -895,7 +895,7 @@ async def postar_painel_adm(interaction: discord.Interaction):
             f"{EM_ITEM} **Revogar Divulgador** — remove cargo e notifica por DM\n"
             f"{EM_ITEM} **Candidaturas Pendentes** — aguardando análise\n"
             f"{EM_ITEM} **Histórico de Avaliações** — últimas 20 avaliações de vídeo\n\n"
-            "─────────────────────────────\n"
+            
             f"{EM_AVI} **Acesso restrito a ADMs e Owner**\n"
             f"{EM_KEY} **Candidaturas e vídeos chegam neste canal automaticamente**"
         ),
