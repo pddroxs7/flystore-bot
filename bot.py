@@ -450,23 +450,11 @@ class EstrelaButton(discord.ui.Button):
         }
         salvar_json(AVALIACOES_FILE, avaliacoes)
 
-        embed = interaction.message.embeds[0]
-        embed.color = APROVADO_COLOR
-
-        embed.fields = [f for f in embed.fields if f.name != "Avaliação"]
-        embed.add_field(
-            name="Avaliação",
-            value=f"{ESTRELAS[self.nota]}  **{self.nota}/5**\npor {avaliador.mention}",
-            inline=False,
+        await interaction.followup.send(
+            f"**Avaliação registrada com sucesso.** {ESTRELAS[self.nota]} **{self.nota}/5**",
+            ephemeral=True,
         )
-        embed.set_footer(text=f"{LOJA}  ·  Avaliado em {agora.strftime('%d/%m/%Y %H:%M')} UTC")
-
-        for child in self.view.children:
-            child.disabled = True
-            if isinstance(child, EstrelaButton) and child.nota == self.nota:
-                child.style = discord.ButtonStyle.success
-
-        await interaction.message.edit(embed=embed, view=self.view)
+        await interaction.message.delete()
 
         # log no canal ADM
         adm_ch = guild.get_channel(CANAL_ADM)
