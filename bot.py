@@ -25,16 +25,16 @@ COOLDOWN_FILE  = "cooldowns.json"
 PENDENTES_FILE = "pendentes.json"
 AVALIACOES_FILE = "avaliacoes.json"
 
-VAGAS_COLOR    = 0x5865F2
-APROVADO_COLOR = 0x57F287
+VAGAS_COLOR    = 0x9B59B6
+APROVADO_COLOR = 0x9B59B6
 RECUSADO_COLOR = 0xED4245
-PENDENTE_COLOR = 0xFEE75C
-ADM_COLOR      = 0x2B2D31
-VIDEO_COLOR    = 0x5865F2
+PENDENTE_COLOR = 0x9B59B6
+ADM_COLOR      = 0x9B59B6
+VIDEO_COLOR    = 0x9B59B6
 
 ESTRELAS = {1: "★☆☆☆☆", 2: "★★☆☆☆", 3: "★★★☆☆", 4: "★★★★☆", 5: "★★★★★"}
 
-# emojis customizados FLY Store
+# emojis customizados FLY Store — botões
 E_APROVAR    = discord.PartialEmoji(name="fly_aprovar",    id=1562539930834575431)
 E_RECUSAR    = discord.PartialEmoji(name="fly_recusar",    id=1562540025604997140)
 E_REVOGAR    = discord.PartialEmoji(name="fly_revogar",    id=1562540475196375161)
@@ -43,6 +43,14 @@ E_CANDIDATAR = discord.PartialEmoji(name="fly_candidatar", id=156254066274061525
 E_HISTORICO  = discord.PartialEmoji(name="fly_historico",  id=1562540782404116601)
 E_LISTAR     = discord.PartialEmoji(name="fly_listar",     id=1562541006161973339)
 E_STAR       = discord.PartialEmoji(name="fly_star",       id=1562541077209288844)
+
+# emojis customizados FLY Store — texto
+EM_REQ  = "<:fly_requisitos:1562642165702860811>"
+EM_BEN  = "<:fly_beneficios:1562642296519004230>"
+EM_CAN  = "<:fly_candidatura:1562642565688205352>"
+EM_ITEM = "<:fly_item:1562642664128512010>"
+EM_AVI  = "<:fly_aviso:1562642748438351883>"
+EM_KEY  = "<:fly_key:1562642840222171186>"
 
 YOUTUBE_RE = re.compile(
     r"(https?://)?(www\.)?"
@@ -54,23 +62,24 @@ TIKTOK_RE = re.compile(
 )
 
 VAGAS_MSG = (
-    f"## Vagas de Divulgador · {LOJA}\n\n"
-    "**›› Requisitos**\n"
-    "◈  Conta no **TikTok** ou **YouTube** disponível para Live\n"
-    "◈  Postar vídeos **diariamente**\n"
-    "◈  Mínimo de **500 seguidores**\n"
-    "◈  Ativo e comprometido com as divulgações\n"
-    f"◈  Seguir o padrão de divulgação da {LOJA}\n\n"
-    "**›› Benefícios**\n"
-    "◈  **25%** de comissão sobre cada venda realizada\n"
-    "◈  Suporte exclusivo para divulgadores\n\n"
-    "**›› Como se candidatar**\n"
-    "◈  Clique no botão abaixo e preencha o formulário\n"
-    "◈  Divulgadores: cole o link do vídeo diretamente neste canal\n"
-    "◈  Aguarde a análise do seu perfil\n\n"
+    f"## **Vagas de Divulgador · {LOJA}**\n\n"
+    f"{EM_REQ} **REQUISITOS**\n"
+    f"{EM_ITEM} **Conta no TikTok ou YouTube disponível para Live**\n"
+    f"{EM_ITEM} **Postar vídeos diariamente**\n"
+    f"{EM_ITEM} **Mínimo de 500 seguidores**\n"
+    f"{EM_ITEM} **Ativo e comprometido com as divulgações**\n"
+    f"{EM_ITEM} **Seguir o padrão de divulgação da {LOJA}**\n\n"
+    f"{EM_BEN} **BENEFÍCIOS**\n"
+    f"{EM_ITEM} **25% de comissão sobre cada venda realizada**\n"
+    f"{EM_ITEM} **Suporte exclusivo para divulgadores**\n\n"
+    f"{EM_CAN} **COMO SE CANDIDATAR**\n"
+    f"{EM_ITEM} **Clique no botão abaixo e preencha o formulário**\n"
+    f"{EM_ITEM} **Divulgadores: use o botão Enviar Vídeo para registrar seus vídeos**\n"
+    f"{EM_ITEM} **Aguarde a análise do seu perfil**\n\n"
     "─────────────────────────────\n"
-    "⚑  Vagas limitadas — candidate-se agora!\n"
-    "Você precisa ter uma key ou adquirir na loja."
+    f"{EM_AVI} **Vagas limitadas — candidate-se agora!**\n\n"
+    f"{EM_KEY} **NÃO DAMOS KEY DE GRAÇA**\n"
+    f"{EM_KEY} **VOCÊ PRECISA TER UMA KEY OU ADQUIRIR NA LOJA**"
 )
 
 # ── persistência ──────────────────────────────────────────────────────────────
@@ -535,6 +544,106 @@ class PainelPublicoView(discord.ui.View):
                 return
 
         await interaction.response.send_modal(CandidaturaModal())
+
+    @discord.ui.button(
+        label="Enviar Vídeo",
+        style=discord.ButtonStyle.secondary,
+        custom_id="btn_enviar_video",
+        emoji=E_STAR,
+        row=0,
+    )
+    async def enviar_video(self, interaction: discord.Interaction, button: discord.ui.Button):
+        membro = interaction.guild.get_member(interaction.user.id)
+        role   = interaction.guild.get_role(DIVULGADOR_ROLE)
+
+        if role not in (membro.roles if membro else []):
+            await interaction.response.send_message(
+                "Apenas Divulgadores podem enviar vídeos.",
+                ephemeral=True,
+            )
+            return
+
+        await interaction.response.send_modal(EnviarVideoModal())
+
+
+class EnviarVideoModal(discord.ui.Modal, title="Enviar Vídeo · FLY Store"):
+
+    link = discord.ui.TextInput(
+        label="Link do vídeo",
+        placeholder="https://tiktok.com/@seuperfil/video/... ou https://youtu.be/...",
+        required=True,
+        max_length=300,
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+
+        guild  = interaction.guild
+        membro = guild.get_member(interaction.user.id)
+        agora  = datetime.now(timezone.utc)
+
+        plataforma, url = detectar_plataforma(self.link.value)
+
+        if plataforma is None:
+            await interaction.followup.send(
+                "Link inválido. Envie um link válido do **YouTube** ou **TikTok**.",
+                ephemeral=True,
+            )
+            return
+
+        # confirmação silenciosa pro divulgador
+        await interaction.followup.send(
+            f"**Vídeo enviado com sucesso.** Link registrado no {plataforma}.",
+            ephemeral=True,
+        )
+
+        # embed pro canal de vídeos
+        videos_ch = guild.get_channel(CANAL_VIDEOS)
+        if videos_ch:
+            registro = discord.Embed(
+                title=f"**Novo Vídeo · {LOJA}**",
+                description=f"**{membro.display_name}** postou no **{plataforma}**",
+                color=VIDEO_COLOR,
+            )
+            registro.set_author(
+                name=f"{membro.display_name}  ·  {membro}",
+                icon_url=membro.display_avatar.url,
+            )
+            registro.add_field(name="**Plataforma**", value=f"**{plataforma}**", inline=True)
+            registro.add_field(name="**Link**",       value=url,                 inline=False)
+            if plataforma == "YouTube":
+                yt_match = YOUTUBE_RE.search(url)
+                if yt_match:
+                    registro.set_image(url=thumbnail_youtube(yt_match.group(4)))
+            registro.set_footer(text=f"{LOJA}  ·  {agora.strftime('%d/%m/%Y %H:%M')} UTC")
+            registro.timestamp = agora
+            await videos_ch.send(embed=registro)
+
+        # embed pro canal ADM com estrelas
+        adm_ch = guild.get_channel(CANAL_ADM)
+        if adm_ch:
+            adm_embed = discord.Embed(
+                title=f"**Novo Vídeo para Avaliar · {LOJA}**",
+                color=PENDENTE_COLOR,
+            )
+            adm_embed.set_author(
+                name=f"{membro.display_name}  ·  {membro}",
+                icon_url=membro.display_avatar.url,
+            )
+            adm_embed.add_field(name="**Plataforma**", value=f"**{plataforma}**", inline=True)
+            adm_embed.add_field(name="**Link**",       value=url,                 inline=False)
+            if plataforma == "YouTube":
+                yt_match = YOUTUBE_RE.search(url)
+                if yt_match:
+                    adm_embed.set_image(url=thumbnail_youtube(yt_match.group(4)))
+            adm_embed.set_footer(text=f"{LOJA}  ·  ID: {membro.id}  ·  Aguardando avaliação")
+            adm_embed.timestamp = agora
+            view = AvaliacaoVideoView(autor_id=membro.id, link=url, plataforma=plataforma)
+            await adm_ch.send(embed=adm_embed, view=view)
+
+    async def on_error(self, interaction: discord.Interaction, error: Exception):
+        await interaction.response.send_message("Erro ao enviar vídeo. Tente novamente.", ephemeral=True)
+        raise error
 
 
 # ══════════════════════════════════════════════════════════════════════════════
