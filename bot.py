@@ -19,7 +19,7 @@ DIVULGADOR_ROLE = int(os.getenv("DIVULGADOR_ROLE"))
 CARGOS_ADM      = [int(x) for x in os.getenv("CARGOS_ADM", "").split(",") if x]
 
 LOJA          = "FLY Store"
-COOLDOWN_DIAS = 7
+COOLDOWN_DIAS = 1 / 1440  # 1 minuto
 
 COOLDOWN_FILE  = "cooldowns.json"
 PENDENTES_FILE = "pendentes.json"
