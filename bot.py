@@ -55,12 +55,17 @@ EM_AVI  = "<:fly_aviso:1562642748438351883>"
 EM_KEY  = "<:fly_key:1562642840222171186>"
 
 YOUTUBE_RE = re.compile(
-    r"(https?://)?(www\.)?"
-    r"(youtube\.com/watch\?v=|youtu\.be/|youtube\.com/shorts/)"
+    r"(https?://)?"
+    r"(www\.|m\.|music\.)?"
+    r"(youtube\.com/(watch\?(?:.*&)?v=|shorts/|live/|embed/|v/)|youtu\.be/)"
     r"([\w\-]{11})"
 )
 TIKTOK_RE = re.compile(
-    r"(https?://)?(www\.)?tiktok\.com/@[\w\.\-]+/video/\d+"
+    r"(https?://)?"
+    r"((?:www\.|vm\.|m\.|vt\.)?tiktok\.com/"
+    r"(?:@[\w\.\-]+/video/\d+|v/\d+|embed/v2/\d+|t/[\w\-]+|[\w\-]+)"
+    r"|vt\.tiktok\.com/[\w\-]+"
+    r"|vm\.tiktok\.com/[\w\-]+)"
 )
 
 VAGAS_MSG = (
@@ -106,11 +111,14 @@ def tem_cargo_adm(membro: discord.Member) -> bool:
 def detectar_plataforma(texto: str) -> tuple[str | None, str | None]:
     yt = YOUTUBE_RE.search(texto)
     if yt:
-        vid_id = yt.group(4)
+        vid_id = yt.group(5)
         return "YouTube", f"https://www.youtube.com/watch?v={vid_id}"
     tt = TIKTOK_RE.search(texto)
     if tt:
-        return "TikTok", tt.group(0)
+        url = tt.group(0)
+        if not url.startswith("http"):
+            url = "https://" + url
+        return "TikTok", url
     return None, None
 
 def thumbnail_youtube(video_id: str) -> str:
