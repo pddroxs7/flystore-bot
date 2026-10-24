@@ -27,12 +27,12 @@ COOLDOWN_FILE  = "cooldowns.json"
 PENDENTES_FILE = "pendentes.json"
 AVALIACOES_FILE = "avaliacoes.json"
 
-VAGAS_COLOR    = 0x9B59B6
-APROVADO_COLOR = 0x9B59B6
+VAGAS_COLOR    = 0x7B2FBE
+APROVADO_COLOR = 0x7B2FBE
 RECUSADO_COLOR = 0xED4245
-PENDENTE_COLOR = 0x9B59B6
-ADM_COLOR      = 0x9B59B6
-VIDEO_COLOR    = 0x9B59B6
+PENDENTE_COLOR = 0x7B2FBE
+ADM_COLOR      = 0x7B2FBE
+VIDEO_COLOR    = 0x7B2FBE
 
 ESTRELAS = {1: "★☆☆☆☆", 2: "★★☆☆☆", 3: "★★★☆☆", 4: "★★★★☆", 5: "★★★★★"}
 
@@ -53,6 +53,13 @@ EM_CAN  = "<:fly_candidatura:1562642565688205352>"
 EM_ITEM = "<:fly_item:1562642664128512010>"
 EM_AVI  = "<:fly_aviso:1562642748438351883>"
 EM_KEY  = "<:fly_key:1562642840222171186>"
+
+# emojis customizados FLY Store — vídeo
+EM_VIDEO      = "<:fly_video:1563388045397467156>"
+EM_TIKTOK     = "<:fly_tiktok:1563388116939841557>"
+EM_YOUTUBE    = "<:fly_youtube:1563387968675258420>"
+EM_LINK       = "<:fly_link:1563388163114799164>"
+EM_DIVULGADOR = "<:fly_divulgador:1563388251727859782>"
 
 YOUTUBE_RE = re.compile(
     r"(https?://)?"
@@ -507,7 +514,7 @@ class PainelPublicoView(discord.ui.View):
 
     @discord.ui.button(
         label="Candidatar-se",
-        style=discord.ButtonStyle.primary,
+        style=discord.ButtonStyle.secondary,
         custom_id="btn_candidatar",
         emoji=E_CANDIDATAR,
     )
@@ -598,17 +605,18 @@ class EnviarVideoModal(discord.ui.Modal, title="Enviar Vídeo · FLY Store"):
         # embed pro canal de vídeos
         videos_ch = guild.get_channel(CANAL_VIDEOS)
         if videos_ch:
+            em_plat = EM_TIKTOK if plataforma == "TikTok" else EM_YOUTUBE
             registro = discord.Embed(
-                title=f"**Novo Vídeo · {LOJA}**",
-                description=f"**{membro.display_name}** postou no **{plataforma}**",
+                title=f"{EM_VIDEO} **Novo Vídeo · {LOJA}**",
+                description=f"{EM_DIVULGADOR} **{membro.display_name}** postou no **{plataforma}**",
                 color=VIDEO_COLOR,
             )
             registro.set_author(
                 name=f"{membro.display_name}  ·  {membro}",
                 icon_url=membro.display_avatar.url,
             )
-            registro.add_field(name="**Plataforma**", value=f"**{plataforma}**", inline=True)
-            registro.add_field(name="**Link**",       value=url,                 inline=False)
+            registro.add_field(name=f"{em_plat} **Plataforma**", value=f"**{plataforma}**", inline=True)
+            registro.add_field(name=f"{EM_LINK} **Link**",       value=url,                 inline=False)
             if plataforma == "YouTube":
                 yt_match = YOUTUBE_RE.search(url)
                 if yt_match:
@@ -620,16 +628,17 @@ class EnviarVideoModal(discord.ui.Modal, title="Enviar Vídeo · FLY Store"):
         # embed pro canal ADM com estrelas
         adm_ch = guild.get_channel(CANAL_ADM)
         if adm_ch:
+            em_plat = EM_TIKTOK if plataforma == "TikTok" else EM_YOUTUBE
             adm_embed = discord.Embed(
-                title=f"**Novo Vídeo para Avaliar · {LOJA}**",
+                title=f"{EM_VIDEO} **Novo Vídeo para Avaliar · {LOJA}**",
                 color=PENDENTE_COLOR,
             )
             adm_embed.set_author(
                 name=f"{membro.display_name}  ·  {membro}",
                 icon_url=membro.display_avatar.url,
             )
-            adm_embed.add_field(name="**Plataforma**", value=f"**{plataforma}**", inline=True)
-            adm_embed.add_field(name="**Link**",       value=url,                 inline=False)
+            adm_embed.add_field(name=f"{em_plat} **Plataforma**", value=f"**{plataforma}**", inline=True)
+            adm_embed.add_field(name=f"{EM_LINK} **Link**",       value=url,                 inline=False)
             if plataforma == "YouTube":
                 yt_match = YOUTUBE_RE.search(url)
                 if yt_match:
@@ -874,7 +883,6 @@ async def on_message(message: discord.Message):
 async def postar_vagas(interaction: discord.Interaction):
     embed = discord.Embed(description=VAGAS_MSG, color=VAGAS_COLOR)
     embed.set_image(url=BANNER_URL)
-    embed.set_thumbnail(url=LOGO_URL)
     embed.set_footer(text=f"{LOJA}  ·  Clique para se candidatar")
     await interaction.channel.send(embed=embed, view=PainelPublicoView())
     await interaction.response.send_message("Painel público postado.", ephemeral=True)
